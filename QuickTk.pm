@@ -16,7 +16,7 @@ use vars qw($VERSION @ISA @EXPORT_OK);
 require Exporter;
 require AutoLoader;
 
-$VERSION=0.88;
+$VERSION=0.89;
 @ISA=qw(Exporter AutoLoader);
 @EXPORT_OK=qw(app createwidget showglobals logit logg);
 
@@ -108,7 +108,7 @@ sub createwidget {
   die "couldn't find \"$specname\" widget to create\n" unless defined $spec;
   my ($level,$momname,$momidx,$name,$type,$cfg,$pak,$children)=@$spec;
   for($name,$type,$cfg,$pak) {
-    s/\$(\d+)/$$arg[$1]/g;
+    s/\$(\d+)/$$arg[$1-1]/g;
   }
   if(defined $momidx) { # this is a menu item
     $code="\$\$w{${momname}_${momidx}_$$arg[0]}=\$\${momname}->$mt{$type}";
@@ -183,7 +183,7 @@ sub createwidget {
       }
     }
     return if($pak=~/^nopack/);
-    $ret=($pak=~s/^(pack|place|grid)//)?$1:'pack';
+    $ret=($pak=~s/^(pack|place|grid),//)?$1:'pack';
     $code="\$\$w{${name}_$$arg[0]}->$ret($pak)";
     $err=_docode($gl,$level,$code);
     $code='';
@@ -196,11 +196,11 @@ sub createwidget {
 
 sub _loadwidget {
   my ($gl,$spec,$level,$momname)=@_;
-  my ($cfg,$pak,$idx,$ret);
+  my ($cfg,$pak,$idx,$ret,$cre,$code,$err);
   my ($localname,$type,$tail)=split ' ',$$spec[0],3;
+  $momname='' if not defined $momname;
   my $name=$momname.$localname;
-  my ($cre,$code,$err);
-  $level=0 if(!defined $level);
+  $level=0 if not defined $level;
   if($level==0) {
     $type='MainWindow' if($type eq 'TopLevel');
     if($type ne 'MainWindow') {
@@ -284,7 +284,7 @@ sub _loadwidget {
     }
   }
   return if($pak=~/^nopack/);
-  $ret=($pak=~s/^(pack|place|grid)//)?$1:'pack';
+  $ret=($pak=~s/^(pack|place|grid),//)?$1:'pack';
   $code="\$\$w{$name}->$ret($pak)";
   $err=_docode($gl,$level,$code);
   $code=''; 
@@ -307,8 +307,6 @@ sub _bindevent {
 
 sub _docode {
   my ($gl,$level,$code)=@_;
-#   print "             --- docode() arg: ",
-#          defined $Qtk::QuickTk::arg?$Qtk::QuickTk::arg:'undef',"\n";
   $code.=";\n";
   my $w=$$gl{widgets};
   $$gl{lfh}->print('  'x$level,$code) if(exists $$gl{lfh});
@@ -349,18 +347,33 @@ sub _getargs {
       }
       last if $opt eq '';
 
-      if(defined $val and $val ne '' and $val ne '-empty-') {
-        $val="\"$val\"";
-        push @pak,"-$opt=>$val";
-      } elsif($opt eq 'nocreate') {
-        $create=0;
-      } elsif($opt=~/^nopack|pack|place|grid$/) {
-        unshift @pak,$opt;
-      } else {
+      if(!defined $val or $val eq '' or $val eq '-empty-') { # no $val
+        if($opt eq 'nocreate') {
+          $create=0;
+        } elsif($opt=~/^nopack|pack|place|grid$/) {
+          unshift @pak,$opt;
+        } else {
         push @pak,"-$opt=>\"\"";
-      }
-    }
-  }
+        }
+      } else {                                              # we have $val
+        if($val=~/^\$\$/) {
+          push @pak,"-$opt=>$val";
+        } elsif($val=~/^\$\d+/) {
+          push @pak,"-$opt=>$val";
+        } elsif($val=~/^\$/) {
+          push @pak,"-$opt=>".'$$gl{'.substr($val,1).'}';
+        } elsif($val=~/^\\/) {
+          push @pak,"-$opt=>".'\\$$gl{'.substr($val,1).'}';
+        } elsif($val eq "''") {
+          push @pak,"-$opt=>$val";
+        } elsif($val=~/^\[.*\]$/) {
+          push @pak,"-$opt=>$val";
+        } else {
+          push @pak,"-$opt=>\"$val\"";
+        }
+      } # end of actions for a $val that is present
+    } # end of loop on packing options
+  } # end of stuff to do if this widget allows packing
   while(defined $inp and $inp!~/^\s*$/) {
     ($opt,$sep,$cdr)=($inp=~/^([^ :]*)([ :])(.*)$/);
     if(!defined $sep) {
@@ -397,11 +410,16 @@ sub _getargs {
         }
       }
 
-      if($val ne '') {
-#         my $fch=substr $val,0,1;
+      if(defined $val and $val ne '') {
         if($val eq '-empty-') {
           $val='';
-        } elsif($val=~/^\$\D/) {
+        } elsif($val=~/^\$\$/) {
+          # leave $val alone
+        } elsif($val=~/^\\\$\$/) {
+          # leave $val alone
+        } elsif($val=~/^\$\d+/) {
+          # leave $val alone
+        } elsif($val=~/^\$/) {
           $val='$$gl{'.substr($val,1).'}';
         } elsif($val=~/^\\/) {
           $val='\\$$gl{'.substr($val,1).'}';
@@ -411,7 +429,6 @@ sub _getargs {
       }
     }
     last if !defined $opt or $opt eq '';
-
     push @cfg,($val ne '')?"-$opt=>".$val:"\"$opt\"";
   }
   return ($create?'create':'nocreate',
@@ -711,7 +728,7 @@ L<Qtk::QuickTk::internals(3pm)> - for implementation details,
 
 L<Tk::UserGuide(3pm)> - for an introduction to perl-tk,
 
-L<Widget(1)> - for examples of most of the perl-tk widgets, etc.,
+L<widget(1)> - for examples of most of the perl-tk widgets, etc.,
 
 and F<http://perl.dystanhays.com/jnk> - for related material on this module.
 
