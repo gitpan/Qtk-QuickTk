@@ -1,0 +1,23 @@
+=head1 NAME
+
+Qtk::QuickTk::internals - implementation details
+
+=head1 SYNOPSIS
+
+  use Qtk::QuickTk;
+
+  sub _loadwidget;
+  sub _loadmenitm;
+  sub _bindevent;
+  sub _getargs;
+  sub _gettitle;
+  sub _getcommand;
+  sub _getsub;
+  sub _getini;
+
+=head1 DESCRIPTION
+
+  (Nothing written, yet.)
+
+=cut
+

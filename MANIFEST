@@ -1,0 +1,10 @@
+Changes
+MANIFEST
+Makefile.PL
+README
+QuickTk.pm
+QuickTk/details.pod
+QuickTk/internals.pod
+QuickTk/scripts.pod
+test.pl
+t/test00.t

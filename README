@@ -1,0 +1,123 @@
+            file:   Qtk::QuickTk-0.88.readme
+
+  QuickTk provides a quick and simple way to produce point-and-click
+applications, using the perl-tk GUI toolkit.  It assumes a beginner's
+level of familiarity with perl-tk, as documented in any of several
+recent books (See, for instance, Nancy Walsh's "Learning Perl/Tk",
+published by O'Reilly, 1999, ISBN: 1-56592-314-6).
+
+  The QuickTk format for specifying a GUI (graphical user interface)
+is simple.  A complete application can be defined in a short, one
+or two page document (see the examples included with this module).
+You need Perl, perl-tk, this module and, probably, the companion
+module Text::TreeFile, in order to support the script you write.
+
+  The perl-tk widget library (Tk, for short) provides "widgets"
+(things you see on the screen, like buttons) and "events" (things
+that can happen to a widget, like a click, right-click or double-click
+of the mouse on a button).  You need to know only about the specific
+widgets and events of Tk you wish to use, and enough Perl to say what
+should happen when your user makes an event happen in one of your
+widgets.
+
+DOCUMENTATION
+
+  There are man pages for Qtk::QuickTk(3pm) which introduces the
+functions and use of the modele,  Qtk::QuickTk::scripts(3pm) which
+provides detailed information about the format for writing GUI
+specification scripts for QuickTk, Qtk::QuickTk::details(3pm) which
+gives exhaustive specification of alternatives and features for use,
+and Qtk::QuickTk::internals(3pm) which documents the code itself.
+Another module: Text::TreeFile(3pm) is used by default and, thus,
+its documentation is descriptive of the low-level format features
+usually employed for this module.
+
+AVAILABILITY
+
+  Copyright (c) 2000 John Kirk. All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+  The latest version of this module should always be available
+at any CPAN (http://www.cpan.org) mirror, or from the author:
+             http://perl.dystanhays.com/jnk
+
+INSTALLATION
+
+  I usually install modules using the CPAN.pm module, invoked as:
+
+       perl -MCPAN -e shell
+
+It can be run by an ordinary user, or root (to install system-wide),
+and asks a few configuration questions the first ime it's run.
+
+  The *.tar.gz file, after being uncompressed and unarchived, expects
+to be installed with the following commands:
+
+       perl Makefile.PL
+       make
+       make test
+
+  This creates and installs man pages, generated from *.pm and *.pod
+files, among other things.
+
+SYNOPSIS
+
+  use Qtk::QuickTk;
+
+  # for a QuickTk GUI spec document in file: scriptfile.qtk:
+  my $app=Qtk::QuickTk->new('scriptfile.qtk');
+
+  MainLoop;
+
+or you can make the script file directly executable by giving it
+the following as its first line:
+
+  exec /usr/bin/perl -M'Qtk::QuickTk-app' -e app $0;exit
+
+  See example scripts, provided with the module, to get the flavor
+of what scripts look like.
+
+CAVEAT
+
+  QuickTk defines only a simpler format for writing the specification
+for a GUI-based application which uses the perl-tk widget library.
+Familiarity with, or reference to, that library is required to use
+QuickTk.  The module, Text::TreeFile(3pm) is used, by default, for
+interpreting the low-level file format in which GUI specifications
+are written, so familiarity with, or reference to, that module may
+be helpful in using QuickTk.
+
+REQUIRES
+
+  QuickTk uses modules:  Text::TreeFile(3pm) (optionally),
+Tk(3pm), FileHandle(3pm), Carp(3pm), English(3pm), Exporter(3pm)
+and Autoloader(3pm).
+
+CONTENTS
+
+  This distribution provides the following:
+
+QuickTk.pm  -- the code for the module, which your program will
+  access with a "use Qtk::QuickTk;" statement, typically.  Pod
+  documentation is embedded in this file, from which the man page,
+  Qtk::QuickTk(3pm) is generated.
+
+scripts.pod  -- plain old documentation exhaustively describing
+  the syntax functionality of the GUI specification format
+  supported   by the QuickTk module, from which the man page,
+  Qtk::QuickTk::scripts(3pm) is generated.
+
+details.pod  -- plain old documentation exhausively specifying
+  the options for use of the module, from which the man page,
+  Qtk::QuickTk::details(3pm) is generated.
+
+internals.pod  -- plain old documentation of the module code
+  itself, from which the man page, Qtk::QuickTk::internals(3pm)
+  is generated.
+
+test.pl  -- a small program which contains hand-coded copies of
+  data structures that would result from using the Text::TreeFile(3pm)
+  to read the miniapp example file, which displays a menu bar, a task
+  bar and a text window, requests the user to follow a brief procedure
+  and reports results.

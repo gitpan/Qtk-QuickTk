@@ -1,0 +1,133 @@
+=head1 NAME
+
+Qtk::QuickTk::details - precise definition of usage details
+
+=head1 SYNOPSIS
+
+  use Tk;
+  use Qtk::QuickTk
+
+  # need to set $filename, e.g.:  my $filename='miniapp.qtk';
+
+  my $app=Qtk::Quicktk->new($filename);
+  die "QuickTk constructor unable to read GUI spec: $filename\n"
+    unless defined $app;
+
+  MainLoop;die "QuickTk fell through past MainLoop\n";
+
+or, alternatively, make a QuickTk script directly executable, with
+the following first line (see full demo script in EXAMPLES, below:
+
+  exec /usr/bin/perl -M'Qtk::QuickTk=app' -e app $0;exit
+
+=head1 DESCRIPTION
+
+(Introduction not written yet.)
+
+=head1 FUNCTION: B<new> [ I<spec>, [ I<codeout>, [ I<genonly> ] ] ]
+
+The constructor (function "B<new>") for module B<Qtk::QuickTk>
+can be invoked with zero, one, two or three parameters.  The first
+is a GUI specification, which can take several forms, as below,
+under L<"spec">; the second, a filename for logging generated code;
+and the third, a generate-only flag.  If no parameters are specified,
+an object (a blessed reference to a hash) will be returned with
+only the prototype entries present.  In this case one might create
+a GUI spec by other external means and put it into the hash.
+
+=head2 Parameter: I<spec>
+
+If at least one parameter is specified, the first will be taken
+to be the specification for a GUI based application.  This spec
+may be in one of three forms:  (1) a filename, (2) a reference blessed
+into the B<Text::TreeFile> class, or (3) a reference to a tree of text
+strings.
+
+=over 4
+
+=item B<spec> parameter: as filename
+
+If the spec parameter is a scalar, but not a reference, it will
+be interpreted as a filename and passed to module B<Text::TreeFile>
+to create a tree of strings.  This tree will be used as the GUI
+specification for further processing.
+
+=item B<spec> parameter: as B<Text:TreeFile> ref
+
+If the I<spec> parameter is a reference that has been blessed into
+the B<Text::TreeFile> class, the resulting tree of strings will be
+used as the GUI specification for further processing.
+
+=item B<spec> parameter: as tree of strings
+
+If the spec parameter is a reference to an array of the correct
+form to be a string tree node, it will be interpreted as the GUI
+specification for further processing.
+
+=back
+
+=head2 Parameter: I<codeout>
+
+If at least two parameters are specified in the call to B<new()>, the
+second will be interpreted as a filename for output logging of the
+generated B<perl-tk> code.  If the I<undef> value is specified, then logging
+will not occur.  If this parameter is not specified, the default is
+not to log generated code to a file at all.
+
+=head2 Parameter: I<genonly>
+
+If three parameters are specified in the call to B<new()>, the third
+will be interpreted as a flag indicating whether to execute the B<perl-tk>
+code generated.  If the I<undef> value is specified or this parameter is
+not specified, the default is to execute the code generated.  If a
+value is specified, then no generated B<perl-tk> code will be executed.
+
+=head1 FUNCTION: B<app> [ [ I<genonly> ] I<gfilename> ]
+
+B<app()> will expect the first argument to contain the name of the
+B<QuickTk> script to execute (often, the script that invoked it).
+
+=head1 FUNCTION: B<createwidget> I<args> I<specname>
+
+B<createwidget()> will expect the first argument to be a reference to
+an array containing values to which the B<QuickTk> script widget spec
+refers by names B<$0>, B<$1>, ..., and the second argument to be a
+string which is the name of the widget specified in the script with the
+'nocreate' packing option set.  This would normally be called by a
+callback specified somewhere in the script.
+
+=head1 FUNCTION: B<showglobals>
+
+(Not written yet.)
+
+=head1 FUNCTION: B<logit>
+
+(Not written yet.)
+
+=head1 FUNCTION: B<logg>
+
+(Not written yet.)
+
+=head1 TEST SCRIPT: B<test.pl>
+
+(Not written yet.)
+
+=head1 EXPORTS
+
+Nothing is exported by default.  Functions B<app()>, B<createwidget()>,
+B<showglobals()>, B<logit()>, and B<logg()> may be imported on request.
+The module's B<new()> function returns a blessed reference to a hash which
+contains a number of data items. (Refer to L<Qtk::QuickTk::internals> for
+details, if you want them.)  This hash acts as a global repository for
+variables accessible to the application.  See L<Qtk::QuickTk::scripts>
+for instruction and sample uses of this facility.
+
+=head1 EXCEPTIONS
+
+(Not written yet.)
+
+=head1 BUGS
+
+(Not written yet.)
+
+=cut
