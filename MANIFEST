@@ -1,10 +1,13 @@
 Changes
-MANIFEST
 Makefile.PL
-README
+MANIFEST
 QuickTk.pm
 QuickTk/details.pod
 QuickTk/internals.pod
 QuickTk/scripts.pod
-test.pl
+QuickTk088_089.diff
+QuickTk089_090.diff
+README
 t/test00.t
+test.pl
+META.yml                                 Module meta-data (added by MakeMaker)

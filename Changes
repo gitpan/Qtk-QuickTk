@@ -2,4 +2,6 @@ Revision history for Perl extension Qtk::QuickTk.
 
 0.88  Wed Jul 12 10:11:25 2000
 	- original version; created by h2xs 1.19
+0.89      Jul 26          2000
 
+0.90      Aug 20          2000

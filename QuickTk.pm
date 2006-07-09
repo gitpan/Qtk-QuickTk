@@ -16,7 +16,7 @@ use vars qw($VERSION @ISA @EXPORT_OK);
 require Exporter;
 require AutoLoader;
 
-$VERSION=0.89;
+$VERSION=0.90;
 @ISA=qw(Exporter AutoLoader);
 @EXPORT_OK=qw(app createwidget showglobals logit logg);
 
@@ -202,7 +202,7 @@ sub _loadwidget {
   my $name=$momname.$localname;
   $level=0 if not defined $level;
   if($level==0) {
-    $type='MainWindow' if($type eq 'TopLevel');
+    $type='MainWindow' if $type=~/^(Toplevel|Frame)$/;
     if($type ne 'MainWindow') {
       die "Top level widget must be \"MainWindow\", not \"$type\"\n";
     }
@@ -238,9 +238,9 @@ sub _loadwidget {
     return;
   }
   if($type eq 'MainWindow') {
-    $type='TopLevel';
+    $type='Toplevel';
   }
-  if($type eq 'TopLevel') {
+  if($type eq 'Toplevel') {
     ($cre,$cfg,$pak)=_getargs($gl,0,$tail,{'ttl'=>\&_getttl,});
   } elsif($type eq 'Menu') {
     ($cre,$cfg,$pak)=_getargs($gl,0,$tail,{});
@@ -385,7 +385,9 @@ sub _getargs {
       $cdr=~s/^\s+//;
       $inp=$cdr;
     } else {
-      ($val,$inp)=($cdr=~/^[']([^']+)[']\s*(.*)$/);
+      ($val,$inp)=($cdr=~/^["]([^"]+)["]\s*(.*)$/) or
+      ($val,$inp)=($cdr=~/^[']([^']+)[']\s*(.*)$/) or
+      ($val,$inp)=($cdr=~/^([[][^\]]+[\]])\s*(.*)$/);
     }
 
     if(exists $$cmds{$opt}) {
@@ -423,7 +425,8 @@ sub _getargs {
           $val='$$gl{'.substr($val,1).'}';
         } elsif($val=~/^\\/) {
           $val='\\$$gl{'.substr($val,1).'}';
-        } elsif($val ne "''" and $val!~/^\[.*\]$/) {
+        } elsif($val ne "''" and $val!~/^\[.*\]$/
+            and $val!~/^\'.*\'$/ and $val!~/^\".*\"$/) {
           $val="\"$val\"";
         }
       }

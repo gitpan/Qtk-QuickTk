@@ -1,0 +1,28 @@
+dystan@karenjohn:~/historical/projects/qtk/Qtk-QuickTk-0.89$ diff QuickTk.pm ../QuickTk/QuickTk.pm 
+19c19
+< $VERSION=0.89;
+---
+> $VERSION=0.90;
+205c205
+<     $type='MainWindow' if($type eq 'TopLevel');
+---
+>     $type='MainWindow' if $type=~/^(Toplevel|Frame)$/;
+241c241
+<     $type='TopLevel';
+---
+>     $type='Toplevel';
+243c243
+<   if($type eq 'TopLevel') {
+---
+>   if($type eq 'Toplevel') {
+388c388,390
+<       ($val,$inp)=($cdr=~/^[']([^']+)[']\s*(.*)$/);
+---
+>       ($val,$inp)=($cdr=~/^["]([^"]+)["]\s*(.*)$/) or
+>       ($val,$inp)=($cdr=~/^[']([^']+)[']\s*(.*)$/) or
+>       ($val,$inp)=($cdr=~/^([[][^\]]+[\]])\s*(.*)$/);
+426c428,429
+<         } elsif($val ne "''" and $val!~/^\[.*\]$/) {
+---
+>         } elsif($val ne "''" and $val!~/^\[.*\]$/
+>             and $val!~/^\'.*\'$/ and $val!~/^\".*\"$/) {

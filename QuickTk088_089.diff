@@ -1,0 +1,92 @@
+19c19
+< $VERSION=0.88;
+---
+> $VERSION=0.89;
+111c111
+<     s/\$(\d+)/$$arg[$1]/g;
+---
+>     s/\$(\d+)/$$arg[$1-1]/g;
+186c186
+<     $ret=($pak=~s/^(pack|place|grid)//)?$1:'pack';
+---
+>     $ret=($pak=~s/^(pack|place|grid),//)?$1:'pack';
+199c199
+<   my ($cfg,$pak,$idx,$ret);
+---
+>   my ($cfg,$pak,$idx,$ret,$cre,$code,$err);
+200a201
+>   $momname='' if not defined $momname;
+202,203c203
+<   my ($cre,$code,$err);
+<   $level=0 if(!defined $level);
+---
+>   $level=0 if not defined $level;
+287c287
+<   $ret=($pak=~s/^(pack|place|grid)//)?$1:'pack';
+---
+>   $ret=($pak=~s/^(pack|place|grid),//)?$1:'pack';
+310,311d309
+< #   print "             --- docode() arg: ",
+< #          defined $Qtk::QuickTk::arg?$Qtk::QuickTk::arg:'undef',"\n";
+352,359c350,355
+<       if(defined $val and $val ne '' and $val ne '-empty-') {
+<         $val="\"$val\"";
+<         push @pak,"-$opt=>$val";
+<       } elsif($opt eq 'nocreate') {
+<         $create=0;
+<       } elsif($opt=~/^nopack|pack|place|grid$/) {
+<         unshift @pak,$opt;
+<       } else {
+---
+>       if(!defined $val or $val eq '' or $val eq '-empty-') { # no $val
+>         if($opt eq 'nocreate') {
+>           $create=0;
+>         } elsif($opt=~/^nopack|pack|place|grid$/) {
+>           unshift @pak,$opt;
+>         } else {
+361,363c357,376
+<       }
+<     }
+<   }
+---
+>         }
+>       } else {                                              # we have $val
+>         if($val=~/^\$\$/) {
+>           push @pak,"-$opt=>$val";
+>         } elsif($val=~/^\$\d+/) {
+>           push @pak,"-$opt=>$val";
+>         } elsif($val=~/^\$/) {
+>           push @pak,"-$opt=>".'$$gl{'.substr($val,1).'}';
+>         } elsif($val=~/^\\/) {
+>           push @pak,"-$opt=>".'\\$$gl{'.substr($val,1).'}';
+>         } elsif($val eq "''") {
+>           push @pak,"-$opt=>$val";
+>         } elsif($val=~/^\[.*\]$/) {
+>           push @pak,"-$opt=>$val";
+>         } else {
+>           push @pak,"-$opt=>\"$val\"";
+>         }
+>       } # end of actions for a $val that is present
+>     } # end of loop on packing options
+>   } # end of stuff to do if this widget allows packing
+400,401c413
+<       if($val ne '') {
+< #         my $fch=substr $val,0,1;
+---
+>       if(defined $val and $val ne '') {
+404c416,422
+<         } elsif($val=~/^\$\D/) {
+---
+>         } elsif($val=~/^\$\$/) {
+>           # leave $val alone
+>         } elsif($val=~/^\\\$\$/) {
+>           # leave $val alone
+>         } elsif($val=~/^\$\d+/) {
+>           # leave $val alone
+>         } elsif($val=~/^\$/) {
+414d431
+< 
+714c731
+< L<Widget(1)> - for examples of most of the perl-tk widgets, etc.,
+---
+> L<widget(1)> - for examples of most of the perl-tk widgets, etc.,
